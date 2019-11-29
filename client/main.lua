@@ -205,7 +205,6 @@ function SitOnBench(zone, station)
 						trainTimerText = _U('press-e') .. ' '.. _U('to-travel-without-a-ticket')
 						if IsControlJustReleased(0, Keys['E']) then
 							OpenTrainHoppingMenu(station)
-							waitingForTrain = true
 						end
 					else
 						trainTimerText = _U('need-a-train-ticket-to-travel')
@@ -273,7 +272,6 @@ end
 
 function CheckIfPlayerWasCatchedTrainHopping()
 	randomNumber = math.random(100)
-	ESX.ShowNotification(randomNumber)
 	if randomNumber < Config.TrainHoppingFineChance then
 		TriggerServerEvent('esx_billing:sendBill', GetPlayerServerId(PlayerId()), '', (_U('ticket-fine-label')), Config.TrainHoppingFine)
 		ESX.ShowNotification(_U('you-got-caught-by-a-ticket-inspector') .. ', ' .. _U('you-received-a-fine'))

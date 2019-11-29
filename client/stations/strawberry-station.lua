@@ -229,7 +229,7 @@ Config.Stations.strawberry = {
 		},
 
 		Arrivals = {
-			Pos ={x = -298.42, y = -302.11, z = 10.00, h = 187.30},
+			Pos ={x = 270.12, y = -1206.15, z = 38.92, h = 187.30},
 			Size = {x = 3.0, y = 3.0, z = 1.0},
 			Color = {r = 204, g = 204, b = 0},
 			Type = 'arrivals',
