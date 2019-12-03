@@ -162,66 +162,66 @@ function SitOnBench(zone, station)
 	local playerHealthLastFrame = nil
 
 	SetEntityHeading(PlayerPedId(), zone.Pos.h)	
-		waitingForTrain = true
+	waitingForTrain = true
 
-		while waitingForTrain do
-			Citizen.Wait(1)
+	while waitingForTrain do
+		Citizen.Wait(1)
 
-			if IsControlJustReleased(0, Keys['X']) then
-				waitingForTrain = false
-				break
-			end
-
-			if playerHealthLastFrame ~= nil and GetEntityHealth(PlayerPedId()) < playerHealthLastFrame then
-				waitingForTrain = false
-				break
-			end
-
-			playerHealthLastFrame = GetEntityHealth(PlayerPedId())
-
-			local lib, anim = "anim@heists@prison_heistunfinished_biztarget_idle", "target_idle"
-			ESX.Streaming.RequestAnimDict(lib, function()
-				TaskPlayAnim(PlayerPedId(), lib, anim, 8.0, -8.0, -1, 0, 0, false, false, false)
-			end)
-
-			if trainTimer == nil then
-				trainTimer = Config.TrainFrequency * 100 * 60
-			else
-				trainTimer = trainTimer - 1
-			end
-			
-			if trainTimer <= 0 then
-				if hasTicket then
-					trainTimerText = _U('press-e') .. ' '..  _U('to-enter-the-train') .. ' - ' .. ticketStationCode
-					trainTimerColor = Config.TrainArrivedTextColour
-
-					if IsControlJustReleased(0, Keys['E']) then
-						travelToStation(ticketStationCode)
-						waitingForTrain = false
-					end
-				else
-					trainTimerColor = Config.NoTicketTextColour
-					if Config.TrainHoppingEnabled == true then
-						trainTimerText = _U('press-e') .. ' '.. _U('to-travel-without-a-ticket')
-						if IsControlJustReleased(0, Keys['E']) then
-							OpenTrainHoppingMenu(station)
-						end
-					else
-						trainTimerText = _U('need-a-train-ticket-to-travel')
-					end
-				end
-			else
-				if Config.ShowWaitTimerToPlayer == true then
-					trainTimerText = _U('next-train-in') .. ': '..math.ceil(trainTimer / 100)
-				else
-					trainTimerText = _('waiting-for-train')
-				end
-				trainTimerColor = Config.TrainTimerTextColour
-			end
-
-			
-			drawWaitingUI(trainTimerText, trainTimerColor.r, trainTimerColor.g, trainTimerColor.b)
+		if IsControlJustReleased(0, Keys['X']) then
+			waitingForTrain = false
+			break
 		end
+
+		if playerHealthLastFrame ~= nil and GetEntityHealth(PlayerPedId()) < playerHealthLastFrame then
+			waitingForTrain = false
+			break
+		end
+
+		playerHealthLastFrame = GetEntityHealth(PlayerPedId())
+
+		local lib, anim = "anim@heists@prison_heistunfinished_biztarget_idle", "target_idle"
+		ESX.Streaming.RequestAnimDict(lib, function()
+			TaskPlayAnim(PlayerPedId(), lib, anim, 8.0, -8.0, -1, 0, 0, false, false, false)
+		end)
+
+		if trainTimer == nil then
+			trainTimer = Config.TrainFrequency * 100 * 60
+		else
+			trainTimer = trainTimer - 1
+		end
+		
+		if trainTimer <= 0 then
+			if hasTicket then
+				trainTimerText = _U('press-e') .. ' '..  _U('to-enter-the-train') .. ' - ' .. ticketStationCode
+				trainTimerColor = Config.TrainArrivedTextColour
+
+				if IsControlJustReleased(0, Keys['E']) then
+					waitingForTrain = false
+					travelToStation(ticketStationCode)
+				end
+			else
+				trainTimerColor = Config.NoTicketTextColour
+				if Config.TrainHoppingEnabled == true then
+					trainTimerText = _U('press-e') .. ' '.. _U('to-travel-without-a-ticket')
+					if IsControlJustReleased(0, Keys['E']) then
+						OpenTrainHoppingMenu(station)
+					end
+				else
+					trainTimerText = _U('need-a-train-ticket-to-travel')
+				end
+			end
+		else
+			if Config.ShowWaitTimerToPlayer == true then
+				trainTimerText = _U('next-train-in') .. ': '..math.ceil(trainTimer / 100)
+			else
+				trainTimerText = _('waiting-for-train')
+			end
+			trainTimerColor = Config.TrainTimerTextColour
+		end
+
+		
+		drawWaitingUI(trainTimerText, trainTimerColor.r, trainTimerColor.g, trainTimerColor.b)
+	end
 end
 
 function OpenTrainHoppingMenu(station)

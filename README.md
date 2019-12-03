@@ -4,7 +4,7 @@ EfmiMetro adds easy fast travel points to the FiveM map in a form of metrostatio
 
 Introduction Video: (WIP)
 ## About:
-### Station Included:
+### Stations Included:
 - [Davis](https://gta.fandom.com/wiki/Davis_Station)
 - [Pillbox South](https://gta.fandom.com/wiki/Pillbox_South_Station)
 - [Little Seoul](https://gta.fandom.com/wiki/Little_Seoul_Station)
@@ -18,7 +18,6 @@ Introduction Video: (WIP)
 ### Localizations Included:
 - English
 - Finnish
-#### Localizations WIP:
 - Swedish
 ##### All contributions to localizations are appreciated! We want to make this resource as easy to implement to different servers as possible!
 ## Installing:
