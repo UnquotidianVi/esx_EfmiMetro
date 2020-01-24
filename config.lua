@@ -25,6 +25,10 @@ Config.TrainTimerTextColour = { r = 255, b = 255, g = 255, a = 255}
 Config.TrainArrivedTextColour = { r = 0, b = 0, g = 255, a = 255}
 Config.NoTicketTextColour = { r = 255, b = 0, g = 0, a = 255}
 
+Config.DrawTicketMachineZones = true
+--Shows a notification when player approaches ticket machine
+Config.ShowTicketMachinePressNotification = true
+
 --Blips
 Config.StationBlipScale = 0.8
 

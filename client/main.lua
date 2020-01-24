@@ -9,6 +9,8 @@ local waitingForTrain = false
 local hasTicket = false
 local ticketStationCode = nil
 
+local isInsideZone = false
+
 ESX	= nil
 
 Citizen.CreateThread(function()
@@ -40,6 +42,17 @@ Citizen.CreateThread(function()
 			end
 		end
 
+		if Config.ShowTicketMachinePressNotification then
+			if zone ~= nil then
+				if isInsideZone == false and zone.Type == "ticket" then
+					ESX.ShowNotification(_U('press-e'), true)
+					isInsideZone = true
+				end
+			else
+				isInsideZone = false
+			end
+		end 
+		
 		if IsControlJustReleased(0, Keys['E']) and zone ~= nil then 
 			TriggerEvent('esx_EfmiMetro:action', zone, station)
 		end
@@ -161,8 +174,13 @@ function SitOnBench(zone, station)
 	local trainTimerText = nil
 	local playerHealthLastFrame = nil
 
-	SetEntityHeading(PlayerPedId(), zone.Pos.h)	
+	RotatePlayerToSitOnABench(zone)
 	waitingForTrain = true
+
+	local lib, anim = "anim@heists@prison_heistunfinished_biztarget_idle", "target_idle"
+	ESX.Streaming.RequestAnimDict(lib, function()
+		TaskPlayAnim(PlayerPedId(), lib, anim, 8.0, -8.0, -1, 1, 0, false, false, false)
+	end)
 
 	while waitingForTrain do
 		Citizen.Wait(1)
@@ -178,11 +196,6 @@ function SitOnBench(zone, station)
 		end
 
 		playerHealthLastFrame = GetEntityHealth(PlayerPedId())
-
-		local lib, anim = "anim@heists@prison_heistunfinished_biztarget_idle", "target_idle"
-		ESX.Streaming.RequestAnimDict(lib, function()
-			TaskPlayAnim(PlayerPedId(), lib, anim, 8.0, -8.0, -1, 0, 0, false, false, false)
-		end)
 
 		if trainTimer == nil then
 			trainTimer = Config.TrainFrequency * 100 * 60
@@ -333,7 +346,7 @@ Citizen.CreateThread(function()
 			for zoneKey, zoneValues in pairs(stationValues.Zones) do
 				local distanceToZone = GetDistanceBetweenCoords(coords, zoneValues.Pos.x, zoneValues.Pos.y, zoneValues.Pos.z, true)
 
-				if zoneValues.Marker ~= 0 and distanceToZone <= Config.DrawDistance.Zone then
+				if zoneValues.Marker ~= 0 and distanceToZone <= Config.DrawDistance.Zone and Config.DrawTicketMachineZones then
 						DrawMarker(zoneValues.Marker, zoneValues.Pos.x, zoneValues.Pos.y, zoneValues.Pos.z, 
 						0.0, 0.0, 0.0, 0, 0.0, 0.0, zoneValues.Size.x, zoneValues.Size.y, zoneValues.Size.z, 
 						zoneValues.Color.r, zoneValues.Color.g, zoneValues.Color.b, 100, false, true, 2, false, false, false, false)
@@ -393,4 +406,72 @@ function Draw3DText(x, y, z, text)
         AddTextComponentString(text)
         DrawText(_x,_y)
     end
+end
+
+--TODO: Clean up this bit of code.
+function RotatePlayerToSitOnABench(benchZone)
+
+	local distancesToDegrees = {
+		{degree = 0, distance = benchZone.Pos.h},
+		{degree = 90, distance = math.abs(90 - benchZone.Pos.h)},
+		{degree = 180, distance = math.abs(180 - benchZone.Pos.h)},
+		{degree = 270, distance = math.abs(270 - benchZone.Pos.h)},
+		{degree = 360, distance = math.abs(360 - benchZone.Pos.h)}
+	}
+	local lowestDegree = nil
+	for degreeKey, degreeValue in pairs(distancesToDegrees) do
+		if lowestDegree == nil or lowestDegree.distance > degreeValue.distance then
+			lowestDegree = degreeValue
+		end
+	end
+
+	local coords = GetEntityCoords(PlayerPedId())
+	ESX.ShowNotification(lowestDegree.degree)
+	if lowestDegree.degree == 0 or lowestDegree.degree == 360 then
+		--(+y)
+		if coords.y > benchZone.Pos.y then
+			SetEntityHeading(PlayerPedId(), benchZone.Pos.h)
+		else
+			local h = benchZone.Pos.h + 180
+			if h > 360 then
+				h = h - 360
+			end
+			SetEntityHeading(PlayerPedId(), h)
+		end
+	elseif lowestDegree.degree == 90 then
+		--(-x)
+		if coords.x < benchZone.Pos.x then
+			SetEntityHeading(PlayerPedId(), benchZone.Pos.h)
+		else
+			local h = benchZone.Pos.h + 180
+			if h > 360 then
+				h = h - 360
+			end
+			SetEntityHeading(PlayerPedId(), h)
+		end
+
+	elseif lowestDegree.degree == 180 then
+		--(-y)
+		if coords.y < benchZone.Pos.y then
+			SetEntityHeading(PlayerPedId(), benchZone.Pos.h)
+		else
+			local h = benchZone.Pos.h + 180
+			if h > 360 then
+				h = h - 360
+			end
+			SetEntityHeading(PlayerPedId(), h)
+		end
+
+	elseif lowestDegree.degree == 270 then
+		--(+x)
+		if coords.x > benchZone.Pos.x then
+			SetEntityHeading(PlayerPedId(), benchZone.Pos.h)
+		else
+			local h = benchZone.Pos.h + 180
+			if h > 360 then
+				h = h - 360
+			end
+			SetEntityHeading(PlayerPedId(), h)
+		end
+	end
 end

@@ -37,7 +37,7 @@ Config.lua
 ```
 If you want to get rid of some stations, then delete/comment out the station file in 
 ```
-__resource.lua
+fxmanifest.lua
 ```
 ## Requirements:
 - [es_extended](https://github.com/ESX-Org/es_extended)
