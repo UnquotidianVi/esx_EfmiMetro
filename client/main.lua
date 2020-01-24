@@ -426,7 +426,6 @@ function RotatePlayerToSitOnABench(benchZone)
 	end
 
 	local coords = GetEntityCoords(PlayerPedId())
-	ESX.ShowNotification(lowestDegree.degree)
 	if lowestDegree.degree == 0 or lowestDegree.degree == 360 then
 		--(+y)
 		if coords.y > benchZone.Pos.y then
